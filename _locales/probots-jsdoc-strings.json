@@ -1,0 +1,7 @@
+{
+  "NeoPixelMode": "Different modes for RGB or RGB+W NeoPixel strips",
+  "probots.Motor": "***********************************************\nMotors \n****************************************************",
+  "probots.infrarrojo": "* INFRARROJO",
+  "probots.ping": "****************ULTRASONIDO",
+  "probots.reproducirTono": "***************************************\nMusic\n*****************************************"
+}

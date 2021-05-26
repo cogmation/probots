@@ -4,10 +4,10 @@ enum conn {
     CON2,//p12 p1
     CON3,//p16 p2
     CON4,//p6 p3
-    CON5,//p7 p4
-    CON6,//p9 p10
-    CON7,//p13 p14
-    CON8//p15 p11
+    //CON5,//p7 p4
+    //CON6,//p9 p10
+    //CON7,//p13 p14
+    //CON8//p15 p11
 };
 
 
@@ -61,14 +61,14 @@ let valueColors: number [][] = [
 //si se necesitan analogicos usar getAnalogPin(DP)
 // hola estoy haciendo un update......
 let digitalCon: any = {
-    1: { P0: DigitalPin.P8, P1: DigitalPin.P0 },
-    2: { P0: DigitalPin.P12, P1: DigitalPin.P1 },
-    3: { P0: DigitalPin.P16, P1: DigitalPin.P2 },
-    4: { P0: DigitalPin.P6, P1: DigitalPin.P3 },
-    5: { P0: DigitalPin.P7, P1: DigitalPin.P4 },
-    6: { P0: DigitalPin.P9, P1: DigitalPin.P10 },
-    7: { P0: DigitalPin.P13, P1: DigitalPin.P14 },
-    8: { P0: DigitalPin.P15, P1: DigitalPin.P11 }
+    1: { P0: DigitalPin.P8, P1: DigitalPin.P0,id: 1, },
+    2: { P0: DigitalPin.P12, P1: DigitalPin.P1, id: 2, },
+    3: { P0: DigitalPin.P16, P1: DigitalPin.P2, id: 3 },
+    4: { P0: DigitalPin.P6, P1: DigitalPin.P3, id: 4, },
+    //    5: { P0: DigitalPin.P7, P1: DigitalPin.P4 },
+    //    6: { P0: DigitalPin.P9, P1: DigitalPin.P10 },
+    //    7: { P0: DigitalPin.P13, P1: DigitalPin.P14 },
+    //    8: { P0: DigitalPin.P15, P1: DigitalPin.P11 }
 }
 
 //Analog connectors 1, 2, 3, 4, 5, 6
@@ -176,11 +176,18 @@ namespace probots {
         pina1: AnalogPin;
         pin2: DigitalPin;
         pina2: AnalogPin;
+        cone: any;
         velocity: number;
         setVelocity(vel: number): void {
             let OutputVal = Math.clamp(0, 100, vel) * 10;
             this.velocity = OutputVal;
         }
+
+        setconnection(cone: any): void {
+            this.cone = cone;
+            this.setpins(cone.P0, cone.P1);
+        }
+
         setpins(pin1: DigitalPin, pin2: DigitalPin): void {
             this.pin1 = pin1;
             this.pina1 = getAnalogPin(pin1);
@@ -189,7 +196,7 @@ namespace probots {
         }
 
         //% weight=50
-        //% block="%motor| on direction %dir| speed %speed"
+        //% block="%motor| spin %dir| speed %speed"
         //% speed.min=0 speed.max=100
         //% group="Motors"
         motorOn(dir: DireccionMotor, speed: number): void {
@@ -204,9 +211,8 @@ namespace probots {
                     pins.digitalWritePin(this.pin1, 0);
                     break
             }
-
-
         }
+
         //%block="%motor|turn off"
         //% group="Motors"
         //% weight=20
@@ -214,7 +220,15 @@ namespace probots {
             pins.digitalWritePin(this.pin1, 0);
             pins.digitalWritePin(this.pin2, 0);
         }
+
+        //% block="%motor| rotate degrees |%grados"
+        //% group="Motors"
+        //% grados.min=0 grados.max=180
+        motorRotate(grados: number): void {
+            pins.servoWritePin(this.pina1, grados);
+        }
     }
+
     function getAnalogPin(pin: DigitalPin): any {
         switch (pin) {
             case DigitalPin.P0:
@@ -283,7 +297,7 @@ namespace probots {
     //% weight=100
     export function createMotor(cone: any): Motor {
         let motor = new Motor();
-        motor.setpins(cone.P0, cone.P1);
+        motor.setconnection(cone);
         motor.setVelocity(0);
         return motor;
     }
@@ -479,12 +493,6 @@ namespace probots {
         return Math.idiv(d, 58);
     }
 
-    //% block="Servo $con=conexiones_ret|degrees |%grados"
-    //% group="Motors"
-    //% grados.min=0 grados.max=180
-    export function servoProbot(con: any, grados: number) {
-        return pins.servoWritePin(getAnalogPin(con.P0), grados)
-    }
 
      /*
      * 
