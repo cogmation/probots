@@ -4,7 +4,7 @@
     "description": "Mis ladrillos extension",
     "dependencies": {
         "core": "*",
-        "ws2812b": "github:microsoft/pxt-ws2812b#v0.1.1"
+        "ws2812b": "file:../ws2812b"
     },
     "files": [
         "README.md",

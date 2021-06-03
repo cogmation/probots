@@ -4,10 +4,10 @@ enum conn {
     CON2,//p12 p1
     CON3,//p16 p2
     CON4,//p6 p3
-    //CON5,//p7 p4
-    //CON6,//p9 p10
-    //CON7,//p13 p14
-    //CON8//p15 p11
+    CON5,//p7 p4
+    CON6,//p9 p10
+    CON7,//p13 p14
+    CON8,//p15 p11
 };
 
 
@@ -65,10 +65,10 @@ let digitalCon: any = {
     2: { P0: DigitalPin.P12, P1: DigitalPin.P1, id: 2, },
     3: { P0: DigitalPin.P16, P1: DigitalPin.P2, id: 3 },
     4: { P0: DigitalPin.P6, P1: DigitalPin.P3, id: 4, },
-    //    5: { P0: DigitalPin.P7, P1: DigitalPin.P4 },
-    //    6: { P0: DigitalPin.P9, P1: DigitalPin.P10 },
-    //    7: { P0: DigitalPin.P13, P1: DigitalPin.P14 },
-    //    8: { P0: DigitalPin.P15, P1: DigitalPin.P11 }
+    5: { P0: DigitalPin.P7, P1: DigitalPin.P4, id: 5, },
+    6: { P0: DigitalPin.P9, P1: DigitalPin.P10, id: 6, },
+    7: { P0: DigitalPin.P13, P1: DigitalPin.P14, id: 7, },
+    8: { P0: DigitalPin.P15, P1: DigitalPin.P11, id: 8, },
 }
 
 //Analog connectors 1, 2, 3, 4, 5, 6
