@@ -453,7 +453,9 @@ namespace probots {
     //% block="Light on $con=conexiones_ret"
     //% group="Sensors"
     export function sensorLuz(con: any): number {
-        return pins.analogReadPin(getAnalogPin(con.P1))
+        // REQUIRED DUMMY LINE
+        let val = pins.digitalReadPin(DigitalPin.P0);
+        return 0;
     }
 
     //% block="Read $times| times the light on $con=conexiones_ret"
@@ -1316,9 +1318,9 @@ namespace probots {
         //% group="Sensors"
         export function getSensedColorValue(): Names_colors
         {
-            // Dummy line required to correctly hook into the execution of this function
+            // REQUIRED DUMMY LINE
             let val = pins.digitalReadPin(DigitalPin.P0);
-            return Names_colors.Black;
+            return 0;
         }
 
     //% block="%col"
