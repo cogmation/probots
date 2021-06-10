@@ -453,9 +453,7 @@ namespace probots {
     //% block="Light on $con=conexiones_ret"
     //% group="Sensors"
     export function sensorLuz(con: any): number {
-        // REQUIRED DUMMY LINE
-        let val = pins.digitalReadPin(DigitalPin.P0);
-        return 0;
+        return pins.analogReadPin(getAnalogPin(con.P1));
     }
 
     //% block="Read $times| times the light on $con=conexiones_ret"
@@ -1318,9 +1316,30 @@ namespace probots {
         //% group="Sensors"
         export function getSensedColorValue(): Names_colors
         {
-            // REQUIRED DUMMY LINE
-            let val = pins.digitalReadPin(DigitalPin.P0);
-            return 0;
+            let tmp = i2cread(ADDR, APDS9960_STATUS) & 0x1;
+            while(!tmp){
+                basic.pause(5);
+                tmp = i2cread(ADDR, APDS9960_STATUS) & 0x1;
+            }
+
+            let hsl = rgbToHsl(i2cread(ADDR, APDS9960_RDATAL), i2cread(ADDR, APDS9960_GDATAL), i2cread(ADDR, APDS9960_BDATAL));
+            let hsl_ = hsl.split("e");
+            let h = 0, s = 0, l = 0;
+
+            h = +hsl_[0];
+            s = +hsl_[1];
+            l = +hsl_[2];
+
+            if(l < 75 && l > 35 && s < 45 && s > 28 && h < 170 && h > 0) return Names_colors.Yellow;
+            if(l < 82 && l > 60 && s < 50 && s > 30 && h < 226 && h > 208) return Names_colors.White;
+            if(l < 55 && l > 18 && s < 45 && s > 35 && h < 355 && h > 340) return Names_colors.Red;
+            if(l < 40 && l > 10 && s < 40 && s > 25 && h < 170 && h > 152) return Names_colors.Green;
+            if(l < 65 && l > 20 && s < 65 && s > 48 && h < 220 && h > 200) return Names_colors.Blue;
+            if(l < 27 && l > 0 && s < 20 && s > 5 && h < 360 && h > 330) return Names_colors.Brown;
+            if(l < 45 && l > 10 && s < 30 && s > 20 && h < 345 && h > 320) return Names_colors.Violet;
+            if(l < 15 && s < 20) return Names_colors.Gray;
+
+            return Names_colors.Black;
         }
 
     //% block="%col"
