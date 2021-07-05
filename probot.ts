@@ -39,7 +39,9 @@ enum Names_colors {
     //% block="Gray"
     Gray,
     //% block="Black"
-    Black
+    Black,
+    //% block="Other"
+    Other
 }
 
 let valueColors: number [][] = [
@@ -1208,9 +1210,24 @@ namespace probots {
         return hue / 100;
     }
 
-    //% blockId=apds9960_init block="Init Color Sensor"
+    //% blockId=apds9960_init block="Init Color Sensor on %pin=conexiones_ret"
     //% group="Sensors"
-    export function initColorSensor(): void {
+    export function initColorSensor(pin: any): void {
+        //init ws2812b rgb led
+        let strip = new Strip();
+        strip.buf = pins.createBuffer(3);
+        strip.start = 0;
+        strip._length = 1;
+        strip._mode = NeoPixelMode.RGB || NeoPixelMode.RGB;
+        strip._matrixWidth = 0;
+        strip.setBrightness(32);
+        strip.setPin(pin.P0);
+
+        setAllRGB(strip, 0xFFFFFF >> 0);
+        strip.show();
+
+
+
         i2cwrite(ADDR, APDS9960_ATIME, 252) // default inte time 4x2.78ms
         i2cwrite(ADDR, APDS9960_CONTROL, 0x03) // todo: make gain adjustable
         i2cwrite(ADDR, APDS9960_ENABLE, 0x00) // put everything off
@@ -1307,12 +1324,16 @@ namespace probots {
             if(l < 27 && l > 0 && s < 20 && s > 5 && h < 360 && h > 330) return "Marron";
             //340 25 40
             if(l < 45 && l > 10 && s < 30 && s > 20 && h < 345 && h > 320) return "Violeta";
-
             if(l < 15 && s < 20) return "Gris";
             return "Desconocido";
         }
 
-        //% blockId=apds9960_readColor block="Read Color"
+        function btw(eval: number, min: number, max: number) {
+            if(max < min) return (eval <= min && eval >= max);
+            return (eval <= max && eval >= min);
+        }
+
+        //% blockId=apds9960_readColor block="Read Color (I2C)"
         //% group="Sensors"
         export function getSensedColorValue(): Names_colors
         {
@@ -1330,16 +1351,16 @@ namespace probots {
             s = +hsl_[1];
             l = +hsl_[2];
 
-            if(l < 75 && l > 35 && s < 45 && s > 28 && h < 170 && h > 0) return Names_colors.Yellow;
-            if(l < 82 && l > 60 && s < 50 && s > 30 && h < 226 && h > 208) return Names_colors.White;
-            if(l < 55 && l > 18 && s < 45 && s > 35 && h < 355 && h > 340) return Names_colors.Red;
-            if(l < 40 && l > 10 && s < 40 && s > 25 && h < 170 && h > 152) return Names_colors.Green;
-            if(l < 65 && l > 20 && s < 65 && s > 48 && h < 220 && h > 200) return Names_colors.Blue;
-            if(l < 27 && l > 0 && s < 20 && s > 5 && h < 360 && h > 330) return Names_colors.Brown;
-            if(l < 45 && l > 10 && s < 30 && s > 20 && h < 345 && h > 320) return Names_colors.Violet;
-            if(l < 15 && s < 20) return Names_colors.Gray;
-
-            return Names_colors.Black;
+            if((btw(h, 262, 275) && (btw(s, 35, 55) || btw(s, 79, 85)) && btw(l, 84, 95)) || ((btw(h, 125, 135) || (btw(h, 50, 60)) && btw(s, 90, 103) && btw(l, 45, 55)))) return Names_colors.Yellow;
+            if(btw(h, 108, 140) && btw(s, 65, 90) && btw(l, 39, 57)) return Names_colors.White;
+            if(btw(l, 50, 60) && btw(s, 44, 67) && btw(h, 320, 335)) return Names_colors.Red;
+            if(btw(l, 25, 60) && btw(s, 45, 70) && btw(h, 185, 197)) return Names_colors.Green;
+            if(btw(l, 36, 47) && btw(s, 50, 60) && btw(h, 129, 157)) return Names_colors.Blue;
+            //if(l < 50 && l > 4 && s < 31 && s > 20) return Names_colors.Brown;
+            //if(l < 37 && l > 8 && s < 45 && s > 35 && h < 345 && h > 339) return Names_colors.Violet;
+            if(((btw(l, 20, 33) || btw(l, 54, 62)) && (btw(s, 36, 46) || btw(s, 57, 73)) && btw(h, 215, 225)) || (btw(h, 90, 102) && (btw(s, 69, 73) || btw(s, 55, 65)) && btw(l, 37, 49))) return Names_colors.Black;
+            if((btw(s, 80, 105) && btw(l, 60, 75)) || (btw(s, 60, 80) && btw(l, 45, 60))) return Names_colors.Gray;
+            return Names_colors.Other;
         }
 
     //% block="%col"
